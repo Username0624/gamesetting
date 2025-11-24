@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "npx vite",
-    "build": "npx vite build --outDir build",
+    "build": "sh -c 'npx vite build --outDir build'",
     "preview": "npx vite preview --port 5173"
   },
   "dependencies": {
