@@ -3,14 +3,19 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "vite",
-    "build": "vite build --outDir build",
-    "preview": "vite preview --port 5173"
+    "start": "npx vite",
+    "build": "npx vite build --outDir build",
+    "preview": "npx vite preview --port 5173"
   },
   "dependencies": {
     "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
     "vite": "^5.0.0",
     "@vitejs/plugin-react": "^4.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }
