@@ -1,0 +1,57 @@
+body {
+  margin: 0;
+  font-family: "Noto Sans TC", sans-serif;
+  background: #fff4e6;
+}
+
+.story-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.story-card {
+  width: 80%;
+  max-width: 500px;
+  padding: 40px;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+  text-align: center;
+}
+
+.story-card h2 {
+  margin-bottom: 12px;
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.options button {
+  padding: 12px;
+  border: none;
+  border-radius: 14px;
+  background: #f7bc62;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.options button:hover {
+  background: #ffcf7d;
+}
+
+.progress {
+  margin-top: 20px;
+  color: #555;
+}
+
+.ending-screen {
+  padding: 60px;
+  text-align: center;
+}

@@ -1,62 +1,78 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function App() {
-  const [step, setStep] = useState(0);
+  const [events, setEvents] = useState([]);
+  const [currentIndex, setCurrentIndex] = useState(0); // <-- 控制正在看的事件
+  const [choices, setChoices] = useState([]);          // <-- A/B 選擇紀錄
+  const [ending, setEnding] = useState(null);
 
-  const steps = [
-    "歡迎來到互動式劇本教學 Demo！",
-    "這裡可以展示二選一事件。",
-    "每個事件都會有兩個按鈕讓你選擇！",
-    "你可以依照你的教學內容加入故事。",
-    "最後會導向不同結局喔～"
-  ];
+  // 初始化讀取事件資料
+  useEffect(() => {
+    fetch("/api/events")
+      .then(res => res.json())
+      .then(data => setEvents(data.events || []));
+  }, []);
 
-  return (
-    <div
-      style={{
-        fontFamily: "sans-serif",
-        padding: "40px",
-        maxWidth: "600px",
-        margin: "0 auto",
-        textAlign: "center",
-      }}
-    >
-      <h1>互動式劇本教學</h1>
+  // 選擇 A 或 B
+  const handleChoice = (choice) => {
+    const updated = [...choices, choice];
+    setChoices(updated);
 
-      <div
-        style={{
-          background: "#fff",
-          padding: "20px",
-          borderRadius: "12px",
-          boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-          fontSize: "20px",
-          minHeight: "120px",
-        }}
-      >
-        {steps[step]}
-      </div>
+    // 事件全部選完 → 送到後端判斷結局
+    if (currentIndex === events.length - 1) {
+      fetch("/api/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ choices: updated })
+      })
+        .then(res => res.json())
+        .then(data => setEnding(data.ending));
+    } else {
+      setCurrentIndex(currentIndex + 1);
+    }
+  };
 
-      <div style={{ marginTop: "30px" }}>
-        <button
-          style={btn}
-          onClick={() => {
-            if (step < steps.length - 1) setStep(step + 1);
-          }}
-        >
-          下一步 →
+  // 如果還沒讀到事件
+  if (!events.length) {
+    return <div className="loading">載入劇情中...</div>;
+  }
+
+  // 如果有結局 → 顯示結局畫面
+  if (ending) {
+    return (
+      <div className="ending-screen">
+        <h1>{ending.title}</h1>
+        <p>{ending.text}</p>
+
+        <button onClick={() => {
+          setEnding(null);
+          setChoices([]);
+          setCurrentIndex(0);
+        }}>
+          重新開始
         </button>
       </div>
+    );
+  }
+
+  // 顯示目前事件
+  const e = events[currentIndex];
+
+  return (
+    <div className="story-page">
+
+      <div className="story-card">
+        <h2>{e.title}</h2>
+        <p>{e.text}</p>
+
+        <div className="options">
+          <button onClick={() => handleChoice("A")}>{e.a}</button>
+          <button onClick={() => handleChoice("B")}>{e.b}</button>
+        </div>
+
+        <div className="progress">{currentIndex + 1} / {events.length}</div>
+      </div>
+
     </div>
   );
 }
-
-const btn = {
-  fontSize: "18px",
-  padding: "12px 20px",
-  borderRadius: "10px",
-  border: "none",
-  cursor: "pointer",
-  background: "#ff9eb5",
-  color: "white",
-  boxShadow: "0 4px 8px rgba(0,0,0,0.15)",
-};
